@@ -31,11 +31,11 @@ class User(db.Model):
         return check_password_hash(self._password, password)
     
     @hybrid_property
-    def security_answer(self): # password getter.
+    def security_answer(self):
         return self._security_answer
 
     @security_answer.setter
-    def security_answer(self, other): #password setter
+    def security_answer(self, other): 
         self._security_answer = generate_password_hash(other)
     
     def check_answer(self, answer):

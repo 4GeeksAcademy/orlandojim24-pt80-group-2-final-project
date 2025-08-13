@@ -49,9 +49,6 @@ export const router = createBrowserRouter(
         <Route path="/passwordreset" element={<PasswordResetEmail/>} />
         <Route path="/securityquestion" element={<SecurityQuestion/>}/>
         <Route path="/newpassword" element={<PasswordReset/>}/>
-        <Route path="/form" element={<RenterForm />} />
-
-        
         <Route path="/listings" element={<Listings />} />
 
         <Route path="/login" element={<Login />} />

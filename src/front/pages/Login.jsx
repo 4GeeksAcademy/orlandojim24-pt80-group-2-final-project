@@ -97,7 +97,6 @@ export const Login = () => {
 			</form>
 			<button type="button" onClick={() => navigate("/passwordreset")} class="btn btn-outline-dark">Reset Password
 			</button>
-			
 		</div>
 		
 	</div>

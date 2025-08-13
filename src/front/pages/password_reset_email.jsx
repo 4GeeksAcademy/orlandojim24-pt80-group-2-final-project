@@ -11,7 +11,7 @@ export const PasswordResetEmail = () =>{
       ev.preventDefault();
       setError("");
       const resp = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}api/password-reset`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/password-reset`,
       {
         method: "POST",
         headers: {
