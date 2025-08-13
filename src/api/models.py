@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 from flask_jwt_extended import JWTManager 
 from datetime import date
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -10,24 +12,45 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)  # hashed
+    _password = db.Column(db.String(256), nullable=False)  # hashed
     is_agent = db.Column(db.Boolean, default=False)  # <= THIS is the key
     name = db.Column(db.String(100))  
     dob = db.Column(db.Date)     
     security_question = db.Column(db.String(255), nullable=False)
-    security_answer = db.Column(db.String(255), nullable=False)
-
-   
+    _security_answer = db.Column(db.String(255), nullable=False)
     
+    @hybrid_property
+    def password(self): # password getter.
+        return self._password
+
+    @password.setter
+    def password(self, other): #password setter
+        self._password = generate_password_hash(other)
+    
+    def check_password(self, password):
+        return check_password_hash(self._password, password)
+    
+    @hybrid_property
+    def security_answer(self): # password getter.
+        return self._security_answer
+
+    @security_answer.setter
+    def security_answer(self, other): #password setter
+        self._security_answer = generate_password_hash(other)
+    
+    def check_answer(self, answer):
+        return check_password_hash(self._security_answer, answer)
+        
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
+            "_password": self._password,
             "is_agent": self.is_agent,
             "name": self.name,
-            "security_question": self.security_question,
-            "security_answer": self.security_answer,
+            "securtity_question":self.security_question,
+            "_securtity_answer": self._security_answer,
             "user_dob": (
             date.fromisoformat(self.dob).isoformat()
             if isinstance(self.dob, str)

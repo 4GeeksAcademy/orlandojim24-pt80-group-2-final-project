@@ -32,7 +32,6 @@ def handle_hello():
 @api.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    hashed = generate_password_hash(data['password'])
 
     dob_str = data.get("dob")
     dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
@@ -42,12 +41,12 @@ def signup():
 
     user = User(
         email=data['email'],
-        password=hashed,
+        password=data['password'],
         is_agent=data.get('is_agent', False),
         name=data.get("name"),
         dob=dob, 
         security_question=security_question,
-        security_answer=security_answer,
+        security_answer=data['security_answer'],
     )
 
     db.session.add(user)
@@ -68,7 +67,7 @@ def login():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
     token = create_access_token(identity=str(user.id)) 
-    if not user or not check_password_hash(user.password, data['password']):
+    if not user or not user.check_password(data['password']):
         return jsonify({"msg": " NOPE! Invalid Password"}), 401 
     else:
         return jsonify({
@@ -247,10 +246,12 @@ def findEmail():
 @api.route("/verify-answer", methods=["POST"])
 @jwt_required()
 def verify_security_answer():
-    data = request.get_json(silent=True)
+    data = request.get_json()
+    email = data.get("email")
+    answer = data.get("security_answer")
 
-    if not data or "answer" not in data:
-        return jsonify(msg="Answer is required."), 400
+    if not email or not answer:
+        return jsonify(msg="Email and answer are required."), 400
 
     answer = data["security_answer"]
     user_id = get_jwt_identity()
@@ -260,7 +261,8 @@ def verify_security_answer():
         return jsonify(msg="User not found"), 404
 
     if not user.check_security_answer(answer):
-        return jsonify(msg="Incorrect answer"), 401
+        return jsonify(msg="Incorrect answer"), 401  
+ 
 
     return jsonify(msg="Answer verified"), 200
 
@@ -309,7 +311,7 @@ def reset_password():
     if not user:
         return jsonify(msg="User not found"), 404
 
-    user.set_password(new_password)  # make sure this hashes the password
+    user.password = new_password  # make sure this hashes the password
     db.session.commit()
     return jsonify(msg="Password reset successful"), 200
 
