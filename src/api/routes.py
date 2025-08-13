@@ -266,20 +266,6 @@ def verify_security_answer():
 
     return jsonify(msg="Answer verified"), 200
 
-
-@api.route("/security-question", methods=["GET"])
-@jwt_required()
-def get_security_question():
-    user_id = get_jwt_identity()
-    user = db.session.get(User, user_id)
-
-    if not user:
-        return jsonify(msg="User not found"), 404
-
-    if not user.security_question:
-        return jsonify(msg="No security question set."), 400
-
-    return jsonify(question=user.security_question), 200
     
 @api.route("/update-security-question", methods=["PUT"])
 @jwt_required()
