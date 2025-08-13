@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "../assets/img/hero-renters.jpg";
+import heroImage from "../assets/img/hero-renters.jpg";
 
 export const SecurityQuestion = () => {
+ const navigate = useNavigate();
+ const [answer, setAnswer] = useState("");
+ const [question, setQuestion] = useState("");
+ const [error, setError] = useState("");
  const navigate = useNavigate();
  const [answer, setAnswer] = useState("");
  const [question, setQuestion] = useState("");
@@ -17,10 +22,16 @@ useEffect(() => {
       navigate("/passwordreset");
       return;
     }
+useEffect(() => {
+    if (!email || !token) {
+      setError("Missing reset credentials. Please restart the password reset process.");
+      navigate("/passwordreset");
+      return;
+    }
 
     const fetchQuestion = async () => {
       try {
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}api/security-question`, {
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/security-question`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -46,13 +57,13 @@ useEffect(() => {
     ev.preventDefault(); 
     setError("");
     try { 
-      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}api/verify-answer`, {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/verify-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization":`Bearer ${token}` },
-        body: JSON.stringify({ answer }),
+        body: JSON.stringify({ security_answer: answer }),
       })
 
-      const data = await resp.json();
+      const data = await resp.json();  
 
       if (resp.ok) {
         navigate("/newpassword"); 
