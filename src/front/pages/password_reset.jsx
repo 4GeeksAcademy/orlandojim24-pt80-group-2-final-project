@@ -21,7 +21,7 @@ export const PasswordReset = () => {
     }
 
     try {
-      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}api/reset-password`, {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/reset-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

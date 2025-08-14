@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "../assets/img/hero-renters.jpg";
-import heroImage from "../assets/img/hero-renters.jpg";
+
 
 export const SecurityQuestion = () => {
- const navigate = useNavigate();
- const [answer, setAnswer] = useState("");
- const [question, setQuestion] = useState("");
- const [error, setError] = useState("");
  const navigate = useNavigate();
  const [answer, setAnswer] = useState("");
  const [question, setQuestion] = useState("");
@@ -22,12 +18,7 @@ useEffect(() => {
       navigate("/passwordreset");
       return;
     }
-useEffect(() => {
-    if (!email || !token) {
-      setError("Missing reset credentials. Please restart the password reset process.");
-      navigate("/passwordreset");
-      return;
-    }
+
 
     const fetchQuestion = async () => {
       try {
